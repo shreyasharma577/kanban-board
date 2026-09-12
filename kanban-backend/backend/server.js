@@ -11,25 +11,12 @@ import boardRoutes from "./routes/boardRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  "http://localhost:5176",
-  "https://kanban-frontend-q03z.onrender.com"
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  }
+  origin: true
 }));
 
 app.use(express.json());
@@ -44,9 +31,10 @@ app.get("/", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    database: mongoose.connection.readyState === 1
-      ? "connected"
-      : "disconnected"
+    database:
+      mongoose.connection.readyState === 1
+        ? "connected"
+        : "disconnected"
   });
 });
 
@@ -85,8 +73,8 @@ async function startServer() {
 
     console.log("MongoDB connected");
 
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
     console.error("Failed to start server:", error.message);
